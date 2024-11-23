@@ -99,3 +99,9 @@ func Module(name string) slog.Attr {
 func App(name string) slog.Attr {
 	return slog.String("app", name)
 }
+
+// Cause returns an Attr that represents the cause of the error.
+// The Attr contains a string key "cause" with the error's message as its value.
+func Cause(err error) slog.Attr {
+	return slog.String("cause", err.Error())
+}
