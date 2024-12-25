@@ -19,10 +19,12 @@ const (
 	LongFile = slogcolor.LongFile
 )
 
-type ColorTextHandlerOptions = slogcolor.Options
+type ColorText1HandlerOptions = slogcolor.Options
 
-type ColorTextHandler = slogcolor.Handler
+var ColorText1HandlerDefaultOptions = slogcolor.DefaultOptions
 
-func NewColorTextHandler(w io.Writer, opts *slogcolor.Options) *ColorTextHandler {
+type ColorText1Handler = slogcolor.Handler
+
+func NewColorText1Handler(w io.Writer, opts *slogcolor.Options) *ColorText1Handler {
 	return slogcolor.NewHandler(w, opts)
 }

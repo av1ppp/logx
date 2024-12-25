@@ -8,7 +8,8 @@ Logx is just a simple wrapper for the `log/slog` library.
 - Handlers for different output formats:
   - JSON (log/slog)
   - Text (log/slog)
-  - ColorText ([github.com/MatusOllah/slogcolor](https://github.com/MatusOllah/slogcolor))
+  - ColorText1 ([github.com/MatusOllah/slogcolor](https://github.com/MatusOllah/slogcolor))
+  - ColorText2 ([github.com/lmittmann/tint](https://github.com/lmittmann/tint))
 
 ## Installation
 
