@@ -6,7 +6,6 @@ require (
 	github.com/MatusOllah/slogcolor v1.4.0
 	github.com/av1ppp/timex v0.0.0-20241123002339-0bfb0edfb188
 	github.com/fatih/color v1.18.0
-	github.com/lmittmann/tint v1.0.6
 )
 
 require (
