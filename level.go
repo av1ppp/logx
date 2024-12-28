@@ -6,6 +6,8 @@ import (
 	"strings"
 )
 
+type Leveler = slog.Leveler
+
 type Level = slog.Level
 
 const (

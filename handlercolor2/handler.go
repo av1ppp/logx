@@ -14,6 +14,8 @@ import (
 	"sync"
 	"time"
 	"unicode"
+
+	"github.com/av1ppp/logx"
 )
 
 // ANSI modes
@@ -30,7 +32,7 @@ const (
 const errKey = "err"
 
 var (
-	defaultLevel      = slog.LevelInfo
+	defaultLevel      = logx.LevelInfo
 	defaultTimeFormat = time.StampMilli
 )
 
@@ -42,8 +44,8 @@ type Options struct {
 	// Enable source code location (Default: false)
 	AddSource bool
 
-	// Minimum level to log (Default: slog.LevelInfo)
-	Level slog.Leveler
+	// Minimum level to log (Default: logx.LevelInfo)
+	Level logx.Leveler
 
 	// ReplaceAttr is called to rewrite each non-group attribute before it is logged.
 	// See https://pkg.go.dev/log/slog#HandlerOptions for details.
@@ -58,7 +60,7 @@ type Options struct {
 
 // NewHandler creates a [slog.Handler] that writes tinted logs to Writer w,
 // using the default options. If opts is nil, the default options are used.
-func NewHandler(w io.Writer, opts *Options) slog.Handler {
+func New(w io.Writer, opts *Options) slog.Handler {
 	h := &handler{
 		w:          w,
 		level:      defaultLevel,
@@ -90,7 +92,7 @@ type handler struct {
 	w  io.Writer
 
 	addSource   bool
-	level       slog.Leveler
+	level       logx.Leveler
 	replaceAttr func([]string, slog.Attr) slog.Attr
 	timeFormat  string
 	noColor     bool
@@ -110,7 +112,7 @@ func (h *handler) clone() *handler {
 	}
 }
 
-func (h *handler) Enabled(_ context.Context, level slog.Level) bool {
+func (h *handler) Enabled(_ context.Context, level logx.Level) bool {
 	return level >= h.level.Level()
 }
 
@@ -232,30 +234,37 @@ func (h *handler) appendTime(buf *buffer, t time.Time) {
 	buf.WriteStringIf(!h.noColor, ansiReset)
 }
 
-func (h *handler) appendLevel(buf *buffer, level slog.Level) {
+func (h *handler) appendLevel(buf *buffer, level logx.Level) {
 	switch {
-	case level < slog.LevelInfo:
+	case level < logx.LevelVerbose:
 		buf.WriteString("DBG")
-		appendLevelDelta(buf, level-slog.LevelDebug)
-	case level < slog.LevelWarn:
+		appendLevelDelta(buf, level-logx.LevelDebug)
+
+	case level < logx.LevelInfo:
+		buf.WriteString("VRB")
+		appendLevelDelta(buf, level-logx.LevelVerbose)
+
+	case level < logx.LevelWarn:
 		buf.WriteStringIf(!h.noColor, ansiBrightGreen)
 		buf.WriteString("INF")
-		appendLevelDelta(buf, level-slog.LevelInfo)
+		appendLevelDelta(buf, level-logx.LevelInfo)
 		buf.WriteStringIf(!h.noColor, ansiReset)
-	case level < slog.LevelError:
+
+	case level < logx.LevelError:
 		buf.WriteStringIf(!h.noColor, ansiBrightYellow)
 		buf.WriteString("WRN")
-		appendLevelDelta(buf, level-slog.LevelWarn)
+		appendLevelDelta(buf, level-logx.LevelWarn)
 		buf.WriteStringIf(!h.noColor, ansiReset)
+
 	default:
 		buf.WriteStringIf(!h.noColor, ansiBrightRed)
 		buf.WriteString("ERR")
-		appendLevelDelta(buf, level-slog.LevelError)
+		appendLevelDelta(buf, level-logx.LevelError)
 		buf.WriteStringIf(!h.noColor, ansiReset)
 	}
 }
 
-func appendLevelDelta(buf *buffer, delta slog.Level) {
+func appendLevelDelta(buf *buffer, delta logx.Level) {
 	if delta == 0 {
 		return
 	} else if delta > 0 {
@@ -333,7 +342,7 @@ func (h *handler) appendValue(buf *buffer, v slog.Value, quote bool) {
 		appendString(buf, v.Time().String(), quote)
 	case slog.KindAny:
 		switch cv := v.Any().(type) {
-		case slog.Level:
+		case logx.Level:
 			h.appendLevel(buf, cv)
 		case encoding.TextMarshaler:
 			data, err := cv.MarshalText()
