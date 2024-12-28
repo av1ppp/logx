@@ -4,9 +4,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/MatusOllah/slogcolor"
-	"github.com/av1ppp/logx"
 	"github.com/fatih/color"
+
+	"github.com/av1ppp/logx"
+	"github.com/av1ppp/logx/handlercolor1"
 )
 
 func main() {
@@ -16,17 +17,22 @@ func main() {
 }
 
 func innerMain() error {
-	logger := logx.New(logx.NewColorText1Handler(os.Stderr, &logx.ColorText1HandlerOptions{
+	logger := logx.New(handlercolor1.New(os.Stderr, &handlercolor1.Options{
 		Level:         logx.LevelDebug,
 		TimeFormat:    time.DateTime,
-		SrcFileMode:   logx.ShortFile,
+		SrcFileMode:   handlercolor1.ShortFile,
 		SrcFileLength: 0,
 		MsgPrefix:     color.HiWhiteString("| "),
 		MsgLength:     0,
 		MsgColor:      color.New(),
 		NoColor:       false,
 	}))
-	logger.Verbose("hello world")
-	logger.Info(slogcolor.Prefix("SceneController", "switching scene"), "scene", "MainMenuScene")
+
+	logger.Debug("debug message")
+	logger.Verbose("verbose message")
+	logger.Info("info message")
+	logger.Warn("warn message")
+	logger.Error("error message")
+
 	return nil
 }

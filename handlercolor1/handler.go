@@ -1,4 +1,4 @@
-package logx
+package handlercolor1
 
 import (
 	"io"
@@ -19,12 +19,12 @@ const (
 	LongFile = slogcolor.LongFile
 )
 
-type ColorText1HandlerOptions = slogcolor.Options
+type Options = slogcolor.Options
 
-var ColorText1HandlerDefaultOptions = slogcolor.DefaultOptions
+var DefaultOptions = slogcolor.DefaultOptions
 
-type ColorText1Handler = slogcolor.Handler
+type Handler = slogcolor.Handler
 
-func NewColorText1Handler(w io.Writer, opts *slogcolor.Options) *ColorText1Handler {
+func New(w io.Writer, opts *slogcolor.Options) *Handler {
 	return slogcolor.NewHandler(w, opts)
 }
