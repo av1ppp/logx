@@ -5,6 +5,7 @@ go 1.23.3
 require (
 	github.com/MatusOllah/slogcolor v1.4.0
 	github.com/av1ppp/timex v0.0.0-20241123002339-0bfb0edfb188
+	github.com/joomcode/errorx v1.2.0
 )
 
 require (

@@ -1,7 +1,6 @@
 package logx
 
 import (
-	"errors"
 	"log/slog"
 	"strings"
 )
@@ -34,7 +33,7 @@ func ParseLevel(s string) (Level, error) {
 	case "panic":
 		return LevelPanic, nil
 	default:
-		return 0, errors.New("unknown log level")
+		return 0, commonErrors.New("unknown log level")
 	}
 }
 
