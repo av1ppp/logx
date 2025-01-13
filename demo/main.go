@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"os"
 
 	"github.com/av1ppp/logx"
@@ -30,7 +31,7 @@ func innerMain() error {
 	// 	NoColor:       false,
 	// }))
 
-	logger.Debug("debug message 1")
+	logger.Debug("debug message 1", handlercolor2.Err(errors.New("something was wrong")), "key", "value")
 	logger.Log(context.Background(), logx.LevelDebug+1, "debug message 2")
 
 	logger.Verbose("verbose message 1")

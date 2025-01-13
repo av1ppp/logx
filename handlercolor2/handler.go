@@ -1,5 +1,3 @@
-// ! Original repository: github.com/lmittmann/tint
-
 package handlercolor2
 
 import (
@@ -16,17 +14,7 @@ import (
 	"unicode"
 
 	"github.com/av1ppp/logx"
-)
-
-// ANSI modes
-const (
-	ansiReset          = "\033[0m"
-	ansiFaint          = "\033[2m"
-	ansiResetFaint     = "\033[22m"
-	ansiBrightRed      = "\033[91m"
-	ansiBrightGreen    = "\033[92m"
-	ansiBrightYellow   = "\033[93m"
-	ansiBrightRedFaint = "\033[91;2m"
+	"github.com/fatih/color"
 )
 
 const errKey = "err"
@@ -79,6 +67,7 @@ func New(w io.Writer, opts *Options) slog.Handler {
 		h.timeFormat = opts.TimeFormat
 	}
 	h.noColor = opts.NoColor
+	h.palette = newPalette(h.noColor)
 	return h
 }
 
@@ -87,6 +76,7 @@ type handler struct {
 	attrsPrefix string
 	groupPrefix string
 	groups      []string
+	palette     *palette
 
 	mu sync.Mutex
 	w  io.Writer
@@ -103,6 +93,7 @@ func (h *handler) clone() *handler {
 		attrsPrefix: h.attrsPrefix,
 		groupPrefix: h.groupPrefix,
 		groups:      h.groups,
+		palette:     h.palette,
 		w:           h.w,
 		addSource:   h.addSource,
 		level:       h.level,
@@ -229,58 +220,40 @@ func (h *handler) WithGroup(name string) slog.Handler {
 }
 
 func (h *handler) appendTime(buf *buffer, t time.Time) {
-	buf.WriteStringIf(!h.noColor, ansiFaint)
-	*buf = t.AppendFormat(*buf, h.timeFormat)
-	buf.WriteStringIf(!h.noColor, ansiReset)
+	h.palette.colorFaint.Fprint(buf, t.Format(h.timeFormat))
 }
 
 func (h *handler) appendLevel(buf *buffer, level logx.Level) {
 	switch {
 	case level < logx.LevelVerbose:
-		buf.WriteString("DBG")
-		appendLevelDelta(buf, level-logx.LevelDebug)
+		appendLevelWithDelta(buf, "DBG", h.palette.colorFaint, level-logx.LevelDebug)
 
 	case level < logx.LevelInfo:
-		buf.WriteString("VRB")
-		appendLevelDelta(buf, level-logx.LevelVerbose)
+		appendLevelWithDelta(buf, "VRB", h.palette.colorFaint, level-logx.LevelVerbose)
 
 	case level < logx.LevelWarn:
-		buf.WriteStringIf(!h.noColor, ansiBrightGreen)
-		buf.WriteString("INF")
-		appendLevelDelta(buf, level-logx.LevelInfo)
-		buf.WriteStringIf(!h.noColor, ansiReset)
+		appendLevelWithDelta(buf, "INF", h.palette.colorHiGreen, level-logx.LevelInfo)
 
 	case level < logx.LevelError:
-		buf.WriteStringIf(!h.noColor, ansiBrightYellow)
-		buf.WriteString("WRN")
-		appendLevelDelta(buf, level-logx.LevelWarn)
-		buf.WriteStringIf(!h.noColor, ansiReset)
+		appendLevelWithDelta(buf, "WRN", h.palette.colorHiYellow, level-logx.LevelWarn)
 
 	default:
-		buf.WriteStringIf(!h.noColor, ansiBrightRed)
-		buf.WriteString("ERR")
-		appendLevelDelta(buf, level-logx.LevelError)
-		buf.WriteStringIf(!h.noColor, ansiReset)
+		appendLevelWithDelta(buf, "ERR", h.palette.colorHiRed, level-logx.LevelError)
 	}
 }
 
-func appendLevelDelta(buf *buffer, delta logx.Level) {
+func appendLevelWithDelta(buf *buffer, levelText string, color *color.Color, delta logx.Level) {
 	if delta == 0 {
+		buf.WriteString(color.Sprint(levelText))
 		return
-	} else if delta > 0 {
-		buf.WriteByte('+')
 	}
-	*buf = strconv.AppendInt(*buf, int64(delta), 10)
+	buf.WriteString(color.Sprint(levelText + "+" + strconv.Itoa(int(delta))))
 }
 
 func (h *handler) appendSource(buf *buffer, src *slog.Source) {
 	dir, file := filepath.Split(src.File)
-
-	buf.WriteStringIf(!h.noColor, ansiFaint)
-	buf.WriteString(filepath.Join(filepath.Base(dir), file))
-	buf.WriteByte(':')
-	buf.WriteString(strconv.Itoa(src.Line))
-	buf.WriteStringIf(!h.noColor, ansiReset)
+	s := filepath.Join(filepath.Base(dir), file) + ":" + strconv.Itoa(src.Line)
+	buf.WriteString(h.palette.colorFaint.Sprint(s))
 }
 
 func (h *handler) appendAttr(buf *buffer, attr slog.Attr, groupsPrefix string, groups []string) {
@@ -318,10 +291,11 @@ func (h *handler) appendAttr(buf *buffer, attr slog.Attr, groupsPrefix string, g
 }
 
 func (h *handler) appendKey(buf *buffer, key, groups string) {
-	buf.WriteStringIf(!h.noColor, ansiFaint)
-	appendString(buf, groups+key, true)
-	buf.WriteByte('=')
-	buf.WriteStringIf(!h.noColor, ansiReset)
+	s := groups + key
+	if needsQuoting(s) {
+		s = strconv.Quote(s)
+	}
+	h.palette.colorFaint.Fprint(buf, s+"=")
 }
 
 func (h *handler) appendValue(buf *buffer, v slog.Value, quote bool) {
@@ -359,12 +333,17 @@ func (h *handler) appendValue(buf *buffer, v slog.Value, quote bool) {
 }
 
 func (h *handler) appendTintError(buf *buffer, err tintError, attrKey, groupsPrefix string) {
-	buf.WriteStringIf(!h.noColor, ansiBrightRedFaint)
-	appendString(buf, groupsPrefix+attrKey, true)
-	buf.WriteByte('=')
-	buf.WriteStringIf(!h.noColor, ansiResetFaint)
-	appendString(buf, err.Error(), true)
-	buf.WriteStringIf(!h.noColor, ansiReset)
+	s := groupsPrefix + attrKey
+	if needsQuoting(s) {
+		s = strconv.Quote(s)
+	}
+	h.palette.colorHiRedFaint.Fprint(buf, s+"=")
+
+	s = err.Error()
+	if needsQuoting(s) {
+		s = strconv.Quote(s)
+	}
+	h.palette.colorHiRed.Fprint(buf, s)
 }
 
 func appendString(buf *buffer, s string, quote bool) {
