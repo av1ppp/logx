@@ -29,11 +29,16 @@ type Handler struct {
 // New creates a new Handler with the specified options. If opts is nil, uses [DefaultOptions].
 func New(out io.Writer, opts *Options) *Handler {
 	h := &Handler{out: out, mu: &sync.Mutex{}}
+
 	if opts == nil {
-		h.opts = *DefaultOptions
-	} else {
-		h.opts = *opts
+		_opts := *DefaultOptions
+		opts = &_opts
 	}
+	if opts.MsgColor == nil {
+		opts.MsgColor = color.New()
+	}
+
+	h.opts = *opts
 	h.palette = newPalette(h.opts.NoColor)
 	return h
 }
@@ -123,9 +128,6 @@ func (h *Handler) Handle(_ context.Context, r slog.Record) error {
 			lenStr := strconv.Itoa(h.opts.MsgLength)
 			formattedMessage = fmt.Sprintf("%-"+lenStr+"s", formattedMessage)
 		}
-	}
-	if h.opts.MsgColor == nil {
-		h.opts.MsgColor = color.New() // Set to empty otherwise we have a null pointer
 	}
 	fmt.Fprintf(bf, "%s", h.opts.MsgColor.Sprint(formattedMessage))
 

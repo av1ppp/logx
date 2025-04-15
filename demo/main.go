@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/av1ppp/logx"
+	"github.com/av1ppp/logx/handlercolor1"
 	"github.com/av1ppp/logx/handlercolor2"
 )
 
@@ -16,7 +17,7 @@ func main() {
 }
 
 func innerMain() error {
-	logger := logx.New(handlercolor2.New(os.Stdout, &handlercolor2.Options{
+	logger := logx.New(handlercolor1.New(os.Stdout, &handlercolor1.Options{
 		Level: logx.LevelDebug,
 	}))
 
