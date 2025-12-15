@@ -26,25 +26,26 @@ func main() {
 	demoHandlerText()
 
 }
+
 func demoHandlerColor1() {
 	logger := logx.New(handlercolor1.New(os.Stdout, &handlercolor1.Options{
 		Level: logx.LevelDebug,
 	}))
 
-	logger.Debug("debug message 1.1")
-	logger.Log(context.Background(), logx.LevelDebug+1, "debug message 1.2", logx.String("key", "value"))
+	logger.Debug("debug message")
+	logger.Log(context.Background(), logx.LevelDebug+1, "debug message", logx.String("key", "value"))
 
-	logger.Verbose("verbose message 1.1")
-	logger.Log(context.Background(), logx.LevelVerbose+1, "verbose message 1.2", logx.String("key", "value"))
+	logger.Verbose("verbose message")
+	logger.Log(context.Background(), logx.LevelVerbose+1, "verbose message", logx.String("key", "value"))
 
-	logger.Info("info message 1.1")
-	logger.Log(context.Background(), logx.LevelInfo+1, "verbose info 1.2", logx.String("key", "value"))
+	logger.Info("info message")
+	logger.Log(context.Background(), logx.LevelInfo+1, "verbose info", logx.String("key", "value"))
 
-	logger.Warn("warn message 1.1")
-	logger.Log(context.Background(), logx.LevelWarn+1, "warn info 1.2", logx.String("key", "value"))
+	logger.Warn("warn message")
+	logger.Log(context.Background(), logx.LevelWarn+1, "warn info", logx.String("key", "value"))
 
-	logger.Error("error message 1.1")
-	logger.Log(context.Background(), logx.LevelError+1, "error info 1.2", logx.String("key", "value"))
+	logger.Error("error message")
+	logger.Log(context.Background(), logx.LevelError+1, "error info", logx.String("key", "value"))
 }
 
 func demoHandlerColor2() {
@@ -52,20 +53,20 @@ func demoHandlerColor2() {
 		Level: logx.LevelDebug,
 	}))
 
-	logger.Debug("debug message 2.1")
-	logger.Log(context.Background(), logx.LevelDebug+1, "debug message 2.2", logx.String("key", "value"))
+	logger.Debug("debug message")
+	logger.Log(context.Background(), logx.LevelDebug+1, "debug message", logx.String("key", "value"))
 
-	logger.Verbose("verbose message 2.1")
-	logger.Log(context.Background(), logx.LevelVerbose+1, "verbose message 2.2", logx.String("key", "value"))
+	logger.Verbose("verbose message")
+	logger.Log(context.Background(), logx.LevelVerbose+1, "verbose message", logx.String("key", "value"))
 
-	logger.Info("info message 2.1")
-	logger.Log(context.Background(), logx.LevelInfo+1, "verbose info 2.2", logx.String("key", "value"))
+	logger.Info("info message")
+	logger.Log(context.Background(), logx.LevelInfo+1, "verbose info", logx.String("key", "value"))
 
-	logger.Warn("warn message 2.1")
-	logger.Log(context.Background(), logx.LevelWarn+1, "warn info 2.2", logx.String("key", "value"))
+	logger.Warn("warn message")
+	logger.Log(context.Background(), logx.LevelWarn+1, "warn info", logx.String("key", "value"))
 
-	logger.Error("error message 2.1")
-	logger.Log(context.Background(), logx.LevelError+1, "error info 2.2", logx.String("key", "value"))
+	logger.Error("error message")
+	logger.Log(context.Background(), logx.LevelError+1, "error info", logx.String("key", "value"))
 }
 
 func demoHandlerColor3() {
@@ -75,20 +76,20 @@ func demoHandlerColor3() {
 		},
 	}))
 
-	logger.Debug("debug message 2.1")
-	logger.Log(context.Background(), logx.LevelDebug+1, "debug message 2.2", logx.String("key", "value"))
+	logger.Debug("debug message")
+	logger.Log(context.Background(), logx.LevelDebug+1, "debug message", logx.String("key", "value"))
 
-	logger.Verbose("verbose message 2.1")
-	logger.Log(context.Background(), logx.LevelVerbose+1, "verbose message 2.2", logx.String("key", "value"))
+	logger.Verbose("verbose message")
+	logger.Log(context.Background(), logx.LevelVerbose+1, "verbose message", logx.String("key", "value"))
 
-	logger.Info("info message 2.1")
-	logger.Log(context.Background(), logx.LevelInfo+1, "verbose info 2.2", logx.String("key", "value"))
+	logger.Info("info message")
+	logger.Log(context.Background(), logx.LevelInfo+1, "verbose info", logx.String("key", "value"))
 
-	logger.Warn("warn message 2.1")
-	logger.Log(context.Background(), logx.LevelWarn+1, "warn info 2.2", logx.String("key", "value"))
+	logger.Warn("warn message")
+	logger.Log(context.Background(), logx.LevelWarn+1, "warn info", logx.String("key", "value"))
 
-	logger.Error("error message 2.1")
-	logger.Log(context.Background(), logx.LevelError+1, "error info 2.2", logx.String("key", "value"))
+	logger.Error("error message")
+	logger.Log(context.Background(), logx.LevelError+1, "error info", logx.String("key", "value"))
 }
 
 func demoHandlerJson() {
@@ -96,20 +97,20 @@ func demoHandlerJson() {
 		Level: logx.LevelDebug,
 	}))
 
-	logger.Debug("debug message 2.1")
-	logger.Log(context.Background(), logx.LevelDebug+1, "debug message 2.2", logx.String("key", "value"))
+	logger.Debug("debug message")
+	logger.Log(context.Background(), logx.LevelDebug+1, "debug message", logx.String("key", "value"))
 
-	logger.Verbose("verbose message 2.1")
-	logger.Log(context.Background(), logx.LevelVerbose+1, "verbose message 2.2", logx.String("key", "value"))
+	logger.Verbose("verbose message")
+	logger.Log(context.Background(), logx.LevelVerbose+1, "verbose message", logx.String("key", "value"))
 
-	logger.Info("info message 2.1")
-	logger.Log(context.Background(), logx.LevelInfo+1, "verbose info 2.2", logx.String("key", "value"))
+	logger.Info("info message")
+	logger.Log(context.Background(), logx.LevelInfo+1, "verbose info", logx.String("key", "value"))
 
-	logger.Warn("warn message 2.1")
-	logger.Log(context.Background(), logx.LevelWarn+1, "warn info 2.2", logx.String("key", "value"))
+	logger.Warn("warn message")
+	logger.Log(context.Background(), logx.LevelWarn+1, "warn info", logx.String("key", "value"))
 
-	logger.Error("error message 2.1")
-	logger.Log(context.Background(), logx.LevelError+1, "error info 2.2", logx.String("key", "value"))
+	logger.Error("error message")
+	logger.Log(context.Background(), logx.LevelError+1, "error info", logx.String("key", "value"))
 }
 
 func demoHandlerText() {
@@ -117,18 +118,18 @@ func demoHandlerText() {
 		Level: logx.LevelDebug,
 	}))
 
-	logger.Debug("debug message 2.1")
-	logger.Log(context.Background(), logx.LevelDebug+1, "debug message 2.2", logx.String("key", "value"))
+	logger.Debug("debug message")
+	logger.Log(context.Background(), logx.LevelDebug+1, "debug message", logx.String("key", "value"))
 
-	logger.Verbose("verbose message 2.1")
-	logger.Log(context.Background(), logx.LevelVerbose+1, "verbose message 2.2", logx.String("key", "value"))
+	logger.Verbose("verbose message")
+	logger.Log(context.Background(), logx.LevelVerbose+1, "verbose message", logx.String("key", "value"))
 
-	logger.Info("info message 2.1")
-	logger.Log(context.Background(), logx.LevelInfo+1, "verbose info 2.2", logx.String("key", "value"))
+	logger.Info("info message")
+	logger.Log(context.Background(), logx.LevelInfo+1, "verbose info", logx.String("key", "value"))
 
-	logger.Warn("warn message 2.1")
-	logger.Log(context.Background(), logx.LevelWarn+1, "warn info 2.2", logx.String("key", "value"))
+	logger.Warn("warn message")
+	logger.Log(context.Background(), logx.LevelWarn+1, "warn info", logx.String("key", "value"))
 
-	logger.Error("error message 2.1")
-	logger.Log(context.Background(), logx.LevelError+1, "error info 2.2", logx.String("key", "value"))
+	logger.Error("error message")
+	logger.Log(context.Background(), logx.LevelError+1, "error info", logx.String("key", "value"))
 }
