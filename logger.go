@@ -3,6 +3,8 @@ package logx
 import (
 	"context"
 	"log/slog"
+	"runtime"
+	"time"
 )
 
 type Logger struct {
@@ -40,19 +42,39 @@ func (self *Logger) WithGroup(name string) *Logger {
 }
 
 func (self *Logger) Verbose(msg string, args ...any) {
-	self.Logger.Log(context.Background(), slog.Level(LevelVerbose), msg, args...)
+	self.log(context.Background(), slog.Level(LevelVerbose), msg, args...)
 }
 
 func (self *Logger) VerboseContext(ctx context.Context, msg string, args ...any) {
-	self.Logger.Log(ctx, slog.Level(LevelVerbose), msg, args...)
+	self.log(ctx, slog.Level(LevelVerbose), msg, args...)
 }
 
 func (self *Logger) Panic(msg string, args ...any) {
-	self.Logger.Log(context.Background(), slog.Level(LevelPanic), msg, args...)
+	self.log(context.Background(), slog.Level(LevelPanic), msg, args...)
 	panic(msg + ", see logs for details")
 }
 
 func (self *Logger) PanicContext(ctx context.Context, msg string, args ...any) {
-	self.Logger.Log(ctx, slog.Level(LevelPanic), msg, args...)
+	self.log(ctx, slog.Level(LevelPanic), msg, args...)
 	panic(msg + ", see logs for details")
+}
+
+// log is the method for fix stacktrace.
+func (self *Logger) log(ctx context.Context, level Level, msg string, args ...any) {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	if !self.Enabled(ctx, level) {
+		return
+	}
+	var pc uintptr
+	// if !internal.IgnorePC {
+	var pcs [1]uintptr
+	// skip [runtime.Callers, this function, this function's caller]
+	runtime.Callers(3, pcs[:])
+	pc = pcs[0]
+	// }
+	r := NewRecord(time.Now(), level, msg, pc)
+	r.Add(args...)
+	_ = self.Handler().Handle(ctx, r)
 }
