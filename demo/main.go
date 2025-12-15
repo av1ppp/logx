@@ -24,12 +24,12 @@ func main() {
 	demoHandlerJson()
 	fmt.Println()
 	demoHandlerText()
-
 }
 
 func demoHandlerColor1() {
 	logger := logx.New(handlercolor1.New(os.Stdout, &handlercolor1.Options{
-		Level: logx.LevelDebug,
+		Level:       logx.LevelDebug,
+		SrcFileMode: handlercolor1.LongFile,
 	}))
 
 	logger.Debug("debug message")
@@ -50,7 +50,8 @@ func demoHandlerColor1() {
 
 func demoHandlerColor2() {
 	logger := logx.New(handlercolor2.New(os.Stdout, &handlercolor2.Options{
-		Level: logx.LevelDebug,
+		Level:     logx.LevelDebug,
+		AddSource: true,
 	}))
 
 	logger.Debug("debug message")
@@ -72,7 +73,8 @@ func demoHandlerColor2() {
 func demoHandlerColor3() {
 	logger := logx.New(handlercolor3.New(os.Stdout, &handlercolor3.Options{
 		HandlerOptions: &slog.HandlerOptions{
-			Level: logx.LevelDebug,
+			Level:     logx.LevelDebug,
+			AddSource: true,
 		},
 	}))
 
@@ -94,7 +96,8 @@ func demoHandlerColor3() {
 
 func demoHandlerJson() {
 	logger := logx.New(handlerjson.New(os.Stdout, &handlerjson.Options{
-		Level: logx.LevelDebug,
+		Level:     logx.LevelDebug,
+		AddSource: true,
 	}))
 
 	logger.Debug("debug message")
@@ -115,7 +118,8 @@ func demoHandlerJson() {
 
 func demoHandlerText() {
 	logger := logx.New(handlertext.New(os.Stdout, &handlertext.Options{
-		Level: logx.LevelDebug,
+		Level:     logx.LevelDebug,
+		AddSource: true,
 	}))
 
 	logger.Debug("debug message")
