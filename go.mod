@@ -5,7 +5,6 @@ go 1.25.3
 require (
 	github.com/av1ppp/timex v0.0.0-20241123002339-0bfb0edfb188
 	github.com/fatih/color v1.18.0
-	github.com/golang-cz/devslog v0.0.15
 	github.com/joomcode/errorx v1.2.0
 	github.com/samber/slog-multi v1.6.0
 )

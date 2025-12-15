@@ -6,6 +6,7 @@ import (
 	multi "github.com/samber/slog-multi"
 )
 
+type HandlerOptions = slog.HandlerOptions
 type Handler = slog.Handler
 
 // JoinHandlers creates a Handler that writes to all handlers in the given list.

@@ -6,6 +6,21 @@ import (
 	"github.com/av1ppp/timex"
 )
 
+type Kind = slog.Kind
+
+const (
+	KindAny Kind = iota
+	KindBool
+	KindDuration
+	KindFloat64
+	KindInt64
+	KindString
+	KindTime
+	KindUint64
+	KindGroup
+	KindLogValuer
+)
+
 type Attr = slog.Attr
 
 // String returns an Attr for a string value.
@@ -105,3 +120,5 @@ func App(name string) slog.Attr {
 func Cause(err error) slog.Attr {
 	return slog.String("cause", err.Error())
 }
+
+var GroupValue = slog.GroupValue

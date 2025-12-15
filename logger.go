@@ -40,19 +40,19 @@ func (self *Logger) WithGroup(name string) *Logger {
 }
 
 func (self *Logger) Verbose(msg string, args ...any) {
-	self.Logger.Log(context.Background(), LevelVerbose, msg, args...)
+	self.Logger.Log(context.Background(), slog.Level(LevelVerbose), msg, args...)
 }
 
 func (self *Logger) VerboseContext(ctx context.Context, msg string, args ...any) {
-	self.Logger.Log(ctx, LevelVerbose, msg, args...)
+	self.Logger.Log(ctx, slog.Level(LevelVerbose), msg, args...)
 }
 
 func (self *Logger) Panic(msg string, args ...any) {
-	self.Logger.Log(context.Background(), LevelPanic, msg, args...)
+	self.Logger.Log(context.Background(), slog.Level(LevelPanic), msg, args...)
 	panic(msg + ", see logs for details")
 }
 
 func (self *Logger) PanicContext(ctx context.Context, msg string, args ...any) {
-	self.Logger.Log(ctx, LevelPanic, msg, args...)
+	self.Logger.Log(ctx, slog.Level(LevelPanic), msg, args...)
 	panic(msg + ", see logs for details")
 }
