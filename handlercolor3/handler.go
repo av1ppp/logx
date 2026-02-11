@@ -165,6 +165,7 @@ func (h *developHandler) withGroupOrAttrs(goa groupOrAttrs) *developHandler {
 
 func (h *developHandler) Handle(ctx context.Context, r logx.Record) error {
 	b := make([]byte, 0, 1024)
+	b = append(b, '\n')
 	b = append(b, h.faintedText([]byte(r.Time.Format(h.opts.TimeFormat)))...)
 	b = append(b, ' ')
 	b = h.formatSourceInfo(b, &r)
