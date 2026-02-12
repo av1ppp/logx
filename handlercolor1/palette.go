@@ -13,20 +13,24 @@ type palette struct {
 
 	colorFgCyan *color.Color
 	colorFgRed  *color.Color
+
+	colorSource *color.Color
 }
 
 func newPalette(noColor bool) *palette {
 	return &palette{
 		colorTime: newColor(noColor, color.Faint),
 
-		colorDebug:   newColor(noColor, color.BgCyan, color.FgHiWhite),
-		colorVerbose: newColor(noColor, color.BgCyan, color.FgHiWhite),
-		colorInfo:    newColor(noColor, color.BgGreen, color.FgHiWhite),
-		colorWarn:    newColor(noColor, color.BgYellow, color.FgHiWhite),
-		colorError:   newColor(noColor, color.BgRed, color.FgHiWhite),
+		colorDebug:   newColor(noColor, color.FgHiCyan),
+		colorVerbose: newColor(noColor, color.FgHiCyan),
+		colorInfo:    newColor(noColor, color.FgHiGreen),
+		colorWarn:    newColor(noColor, color.FgHiYellow),
+		colorError:   newColor(noColor, color.FgHiRed),
 
 		colorFgCyan: newColor(noColor, color.FgCyan),
 		colorFgRed:  newColor(noColor, color.FgRed),
+
+		colorSource: newColor(noColor, color.Faint),
 	}
 }
 

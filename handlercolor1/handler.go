@@ -80,6 +80,8 @@ func (h *Handler) Handle(_ context.Context, r slog.Record) error {
 		fmt.Fprint(bf, h.palette.colorWarn.Sprint("WARN "))
 	case logx.LevelError:
 		fmt.Fprint(bf, h.palette.colorError.Sprint("ERROR"))
+	default:
+		fmt.Fprint(bf, h.palette.colorError.Sprint("  ?  "))
 	}
 	fmt.Fprint(bf, " ")
 
@@ -106,7 +108,7 @@ func (h *Handler) Handle(_ context.Context, r slog.Record) error {
 				lenStr := strconv.Itoa(h.opts.SrcFileLength)
 				formatted = fmt.Sprintf("%-"+lenStr+"s", filename+lineStr)
 			}
-			fmt.Fprint(bf, formatted)
+			fmt.Fprint(bf, h.palette.colorSource.Sprint(formatted))
 		}
 	}
 
@@ -131,6 +133,9 @@ func (h *Handler) Handle(_ context.Context, r slog.Record) error {
 	}
 	fmt.Fprintf(bf, "%s", h.opts.MsgColor.Sprint(formattedMessage))
 
+	if len(attrs) > 0 {
+		fmt.Fprint(bf, "   ")
+	}
 	for _, a := range attrs {
 		fmt.Fprint(bf, " ")
 		for i, g := range h.groups {
