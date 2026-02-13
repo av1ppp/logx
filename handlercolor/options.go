@@ -1,10 +1,9 @@
-package handlercolor1
+package handlercolor
 
 import (
 	"time"
 
 	"github.com/av1ppp/logx"
-	"github.com/fatih/color"
 )
 
 var DefaultOptions *Options = &Options{
@@ -12,10 +11,8 @@ var DefaultOptions *Options = &Options{
 	TimeFormat:    time.DateTime,
 	SrcFileMode:   ShortFile,
 	SrcFileLength: 0,
-	MsgPrefix:     color.HiWhiteString("| "),
+	MsgPrefix:     "| ",
 	MsgLength:     0,
-	MsgColor:      color.New(),
-	NoColor:       false,
 }
 
 type Options struct {
@@ -36,12 +33,6 @@ type Options struct {
 	// MsgPrefix to show prefix before message, default: white colored "| ".
 	MsgPrefix string
 
-	// MsgColor is the color of the message, default to empty.
-	MsgColor *color.Color
-
 	// MsgLength to show fixed length message to line up the log output, default 0 shows complete message.
 	MsgLength int
-
-	// NoColor disables color, default: false.
-	NoColor bool
 }

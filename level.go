@@ -26,23 +26,37 @@ const (
 	LevelPanic   Level = 10
 )
 
+func LevelString(level Level) string {
+	switch level {
+	case LevelDebug:
+		return "DEBUG"
+	case LevelVerbose:
+		return "VERBOSE"
+	case LevelInfo:
+		return "INFO"
+	case LevelWarn:
+		return "WARN"
+	case LevelError:
+		return "ERROR"
+	case LevelPanic:
+		return "PANIC"
+	default:
+		return "?"
+	}
+}
+
 func LevelStringWithDelta(level Level) string {
 	switch {
 	case level < LevelVerbose:
 		return levelStringWithDelta("DEBUG", level-LevelDebug)
-
 	case level < LevelInfo:
 		return levelStringWithDelta("VERBOSE", level-LevelVerbose)
-
 	case level < LevelWarn:
 		return levelStringWithDelta("INFO", level-LevelInfo)
-
 	case level < LevelError:
 		return levelStringWithDelta("WARN", level-LevelWarn)
-
 	case level < LevelPanic:
 		return levelStringWithDelta("ERROR", level-LevelError)
-
 	default:
 		return levelStringWithDelta("PANIC", level-LevelPanic)
 	}

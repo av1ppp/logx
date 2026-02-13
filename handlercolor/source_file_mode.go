@@ -1,4 +1,4 @@
-package handlercolor1
+package handlercolor
 
 type SourceFileMode int
 

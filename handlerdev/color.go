@@ -1,4 +1,4 @@
-package handlercolor3
+package handlerdev
 
 type (
 	foregroundColor   []byte

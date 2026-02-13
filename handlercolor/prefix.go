@@ -1,4 +1,4 @@
-package handlercolor1
+package handlercolor
 
 import (
 	"strings"
@@ -7,7 +7,7 @@ import (
 // Prefix prepends a colored prefix to msg.
 func Prefix(prefix string, msg ...string) string {
 	if len(msg) == 0 {
-		return colorPrefix.Sprint(prefix)
+		return stylePrefix.Render(prefix)
 	}
-	return colorPrefix.Sprint(prefix) + " " + strings.Join(msg, " ")
+	return stylePrefix.Render(prefix) + " " + strings.Join(msg, " ")
 }

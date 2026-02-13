@@ -1,2 +1,2 @@
 // ! Original repository: github.com/MatusOllah/slogcolor
-package handlercolor1
+package handlercolor

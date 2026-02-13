@@ -1,4 +1,4 @@
-package handlercolor3
+package handlerdev
 
 import "github.com/av1ppp/logx"
 

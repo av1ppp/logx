@@ -1,4 +1,4 @@
-package handlercolor1
+package handlercolor
 
 import (
 	"context"
@@ -8,49 +8,45 @@ import (
 	"path/filepath"
 	"runtime"
 	"strconv"
-	"strings"
 	"sync"
 
 	"github.com/av1ppp/logx"
-	"github.com/fatih/color"
+	"github.com/charmbracelet/lipgloss"
 )
 
 type Handler struct {
-	groups  []string
-	attrs   []slog.Attr
-	palette *palette
+	groups []string
+	attrs  []slog.Attr
 
 	opts Options
 
-	mu  *sync.Mutex
+	mu  sync.Mutex
 	out io.Writer
 }
 
 // New creates a new Handler with the specified options. If opts is nil, uses [DefaultOptions].
 func New(out io.Writer, opts *Options) *Handler {
-	h := &Handler{out: out, mu: &sync.Mutex{}}
+	h := &Handler{
+		mu:  sync.Mutex{},
+		out: out,
+	}
 
 	if opts == nil {
 		_opts := *DefaultOptions
 		opts = &_opts
 	}
-	if opts.MsgColor == nil {
-		opts.MsgColor = color.New()
-	}
 
 	h.opts = *opts
-	h.palette = newPalette(h.opts.NoColor)
 	return h
 }
 
 func (h *Handler) clone() *Handler {
 	return &Handler{
-		groups:  h.groups,
-		attrs:   h.attrs,
-		palette: h.palette,
-		opts:    h.opts,
-		mu:      h.mu,
-		out:     h.out,
+		groups: h.groups,
+		attrs:  h.attrs,
+		opts:   h.opts,
+		// mu:     h.mu,
+		out: h.out,
 	}
 }
 
@@ -65,25 +61,27 @@ func (h *Handler) Handle(_ context.Context, r slog.Record) error {
 	bf.Reset()
 
 	if !r.Time.IsZero() {
-		fmt.Fprint(bf, h.palette.colorTime.Sprint(r.Time.Format(h.opts.TimeFormat)))
-		fmt.Fprint(bf, " ")
+		bf.WriteString(styleTime.Render(r.Time.Format(h.opts.TimeFormat)))
+		bf.WriteByte(' ')
 	}
 
 	switch r.Level {
 	case logx.LevelDebug:
-		fmt.Fprint(bf, h.palette.colorDebug.Sprint("DEBUG"))
+		bf.WriteString(styleLevelDebug.Render())
 	case logx.LevelVerbose:
-		fmt.Fprint(bf, h.palette.colorVerbose.Sprint("VERB "))
+		bf.WriteString(styleLevelVerbose.Render())
 	case logx.LevelInfo:
-		fmt.Fprint(bf, h.palette.colorInfo.Sprint("INFO "))
+		bf.WriteString(styleLevelInfo.Render())
 	case logx.LevelWarn:
-		fmt.Fprint(bf, h.palette.colorWarn.Sprint("WARN "))
+		bf.WriteString(styleLevelWarn.Render())
 	case logx.LevelError:
-		fmt.Fprint(bf, h.palette.colorError.Sprint("ERROR"))
+		bf.WriteString(styleLevelError.Render())
+	case logx.LevelPanic:
+		bf.WriteString(styleLevelPanic.Render())
 	default:
-		fmt.Fprint(bf, h.palette.colorError.Sprint("  ?  "))
+		bf.WriteString(styleUnknown.Render())
 	}
-	fmt.Fprint(bf, " ")
+	bf.WriteByte(' ')
 
 	if h.opts.SrcFileMode != Nop {
 		if r.PC != 0 {
@@ -108,7 +106,7 @@ func (h *Handler) Handle(_ context.Context, r slog.Record) error {
 				lenStr := strconv.Itoa(h.opts.SrcFileLength)
 				formatted = fmt.Sprintf("%-"+lenStr+"s", filename+lineStr)
 			}
-			fmt.Fprint(bf, h.palette.colorSource.Sprint(formatted))
+			bf.WriteString(styleSource.Render(formatted))
 		}
 	}
 
@@ -120,7 +118,7 @@ func (h *Handler) Handle(_ context.Context, r slog.Record) error {
 		return true
 	})
 
-	fmt.Fprint(bf, h.opts.MsgPrefix)
+	bf.WriteString(h.opts.MsgPrefix)
 	formattedMessage := r.Message
 	if h.opts.MsgLength > 0 && len(attrs) > 0 {
 		if len(formattedMessage) > h.opts.MsgLength {
@@ -131,32 +129,34 @@ func (h *Handler) Handle(_ context.Context, r slog.Record) error {
 			formattedMessage = fmt.Sprintf("%-"+lenStr+"s", formattedMessage)
 		}
 	}
-	fmt.Fprintf(bf, "%s", h.opts.MsgColor.Sprint(formattedMessage))
+	fmt.Fprintf(bf, "%s", formattedMessage)
 
-	if len(attrs) > 0 {
-		fmt.Fprint(bf, "   ")
-	}
+	// * Gap between message and attributes
+	// if len(attrs) > 0 {
+	// 	bf.WriteString("   ")
+	// }
 	for _, a := range attrs {
-		fmt.Fprint(bf, " ")
-		for i, g := range h.groups {
-			fmt.Fprint(bf, h.palette.colorFgCyan.Sprint(g))
-			if i != len(h.groups) {
-				fmt.Fprint(bf, h.palette.colorFgCyan.Sprint("."))
+		var styleKey, styleValue lipgloss.Style
+		if a.Key == "cause" {
+			styleKey = styleCause
+			styleValue = styleCause
+		} else {
+			styleKey = styleAttrKey
+			styleValue = styleAttrValue
+		}
+
+		bf.WriteByte(' ')
+		if len(h.groups) > 0 {
+			for _, g := range h.groups {
+				bf.WriteString(styleKey.Render(g + "."))
 			}
 		}
 
-		if strings.Contains(a.Key, "err") {
-			fmt.Fprint(bf, h.palette.colorFgRed.Sprintf("%s=", a.Key)+a.Value.String())
-		} else {
-			fmt.Fprint(bf, h.palette.colorFgCyan.Sprintf("%s=", a.Key)+a.Value.String())
-		}
+		bf.WriteString(styleKey.Render(a.Key + "="))
+		bf.WriteString(styleValue.Render(a.Value.String()))
 	}
 
-	fmt.Fprint(bf, "\n")
-
-	if h.opts.NoColor {
-		stripANSI(bf)
-	}
+	bf.WriteByte('\n')
 
 	h.mu.Lock()
 	_, err := io.Copy(h.out, bf)
