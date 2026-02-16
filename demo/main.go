@@ -13,6 +13,7 @@ import (
 	"github.com/av1ppp/logx/handlerdev"
 	"github.com/av1ppp/logx/handlerjson"
 	"github.com/av1ppp/logx/handlertext"
+	"github.com/av1ppp/timex"
 )
 
 const timeFormat = time.Kitchen
@@ -88,6 +89,9 @@ func demoLogger(logger *logx.Logger) {
 		logx.Any("attr.array", []string{"a", "b", "c"}),
 		logx.Any("attr.pointer", &obj),
 		logx.Any("attr.object", obj),
+		logx.Time("attr.time", time.Now()),
+		logx.Duration("attr.duration", time.Second),
+		logx.Durationx("attr.durationx", timex.Second*5),
 	}
 
 	logger.Debug("debug message")

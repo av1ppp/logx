@@ -2,6 +2,7 @@ package logx
 
 import (
 	"log/slog"
+	"time"
 
 	"github.com/av1ppp/timex"
 )
@@ -92,7 +93,12 @@ var Bool = slog.Bool
 
 // Time returns an Attr for a [time.Time].
 // It discards the monotonic portion.
-var Time = slog.Time
+func Time(key string, value time.Time) Attr {
+	return Attr{
+		Key:   key,
+		Value: slog.StringValue(value.Format(time.RFC3339)),
+	}
+}
 
 // Duration returns an Attr for a [time.Duration].
 var Duration = slog.Duration
