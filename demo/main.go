@@ -4,8 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"log/slog"
 	"os"
+	"runtime"
 	"time"
 
 	"github.com/av1ppp/logx"
@@ -21,6 +23,8 @@ const level = logx.LevelDebug
 const addSource = true
 
 func main() {
+	prepare()
+
 	demoHandlerText()
 
 	fmt.Println()
@@ -37,6 +41,16 @@ func main() {
 	fmt.Println()
 
 	demoHandlerColor()
+}
+
+func prepare() {
+	// This function is needed to prepare all internal buffers and caches
+	// before we start testing our loggers.
+	logger := logx.New(handlertext.New(io.Discard, &handlertext.Options{
+		Level:     level,
+		AddSource: addSource,
+	}))
+	demoLogger(logger)
 }
 
 func demoHandlerColor() {
@@ -79,6 +93,10 @@ type Object struct {
 }
 
 func demoLogger(logger *logx.Logger) {
+	runtime.GC()
+	var memStats1 runtime.MemStats
+	runtime.ReadMemStats(&memStats1)
+
 	start := time.Now()
 
 	obj := Object{Name: "name"}
@@ -129,5 +147,11 @@ func demoLogger(logger *logx.Logger) {
 	logger.Error("error message", logx.Cause(errors.New("something was wrong")))
 	logger.Log(context.Background(), logx.LevelError+1, "error message", args...)
 
+	runtime.GC()
+	var memStats2 runtime.MemStats
+	runtime.ReadMemStats(&memStats2)
+
 	fmt.Printf("duration: %s\n", time.Since(start))
+	fmt.Printf("allocs (bytes): %d\n", memStats2.Alloc-memStats1.Alloc)
+	fmt.Printf("allocs (objects): %d\n", memStats2.HeapAlloc-memStats1.HeapAlloc)
 }

@@ -58,6 +58,8 @@ func (h *Handler) Enabled(_ context.Context, level slog.Level) bool {
 // Handle implements slog.Handler.Handle .
 func (h *Handler) Handle(_ context.Context, r slog.Record) error {
 	bf := getBuffer()
+	defer freeBuffer(bf)
+
 	bf.Reset()
 
 	if !r.Time.IsZero() {
@@ -67,19 +69,19 @@ func (h *Handler) Handle(_ context.Context, r slog.Record) error {
 
 	switch r.Level {
 	case logx.LevelDebug:
-		bf.WriteString(styleLevelDebug.Render())
+		bf.WriteString(styleLevelDebugRendered)
 	case logx.LevelVerbose:
-		bf.WriteString(styleLevelVerbose.Render())
+		bf.WriteString(styleLevelVerboseRendered)
 	case logx.LevelInfo:
-		bf.WriteString(styleLevelInfo.Render())
+		bf.WriteString(styleLevelInfoRendered)
 	case logx.LevelWarn:
-		bf.WriteString(styleLevelWarn.Render())
+		bf.WriteString(styleLevelWarnRendered)
 	case logx.LevelError:
-		bf.WriteString(styleLevelError.Render())
+		bf.WriteString(styleLevelErrorRendered)
 	case logx.LevelPanic:
-		bf.WriteString(styleLevelPanic.Render())
+		bf.WriteString(styleLevelPanicRendered)
 	default:
-		bf.WriteString(styleUnknown.Render())
+		bf.WriteString(styleLevelUnknownRendered)
 	}
 	bf.WriteByte(' ')
 
@@ -96,8 +98,8 @@ func (h *Handler) Handle(_ context.Context, r slog.Record) error {
 			case LongFile:
 				filename = f.File
 			}
-			lineStr := fmt.Sprintf(":%d", f.Line)
-			formatted := fmt.Sprintf("%s ", filename+lineStr)
+			lineStr := ":" + strconv.Itoa(f.Line)
+			formatted := filename + lineStr + " "
 			if h.opts.SrcFileLength > 0 {
 				maxFilenameLen := h.opts.SrcFileLength - len(lineStr) - 1
 				if len(filename) > maxFilenameLen {
@@ -161,8 +163,6 @@ func (h *Handler) Handle(_ context.Context, r slog.Record) error {
 	h.mu.Lock()
 	_, err := io.Copy(h.out, bf)
 	h.mu.Unlock()
-
-	freeBuffer(bf)
 
 	return err
 }

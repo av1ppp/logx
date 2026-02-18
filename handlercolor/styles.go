@@ -7,40 +7,47 @@ import (
 var (
 	styleTime = lipgloss.NewStyle()
 
-	styleLevelDebug = lipgloss.NewStyle().
-			SetString("DBG").
-			Bold(true).
-			Foreground(lipgloss.Color("63"))
-
-	styleLevelVerbose = lipgloss.NewStyle().
-				SetString("VRB").
+	styleLevelDebugRendered = lipgloss.NewStyle().
+				SetString("DBG").
 				Bold(true).
-				Foreground(lipgloss.Color("63"))
+				Foreground(lipgloss.Color("63")).
+				Render()
 
-	styleLevelInfo = lipgloss.NewStyle().
-			SetString("INF").
-			Bold(true).
-			Foreground(lipgloss.Color("86"))
+	styleLevelVerboseRendered = lipgloss.NewStyle().
+					SetString("VRB").
+					Bold(true).
+					Foreground(lipgloss.Color("63")).
+					Render()
 
-	styleLevelWarn = lipgloss.NewStyle().
-			SetString("WRN").
-			Bold(true).
-			Foreground(lipgloss.Color("192"))
+	styleLevelInfoRendered = lipgloss.NewStyle().
+				SetString("INF").
+				Bold(true).
+				Foreground(lipgloss.Color("86")).
+				Render()
 
-	styleLevelError = lipgloss.NewStyle().
-			SetString("ERR").
-			Bold(true).
-			Foreground(lipgloss.Color("204"))
+	styleLevelWarnRendered = lipgloss.NewStyle().
+				SetString("WRN").
+				Bold(true).
+				Foreground(lipgloss.Color("192")).
+				Render()
 
-	styleLevelPanic = lipgloss.NewStyle().
-			SetString("PNC").
-			Bold(true).
-			Foreground(lipgloss.Color("134"))
+	styleLevelErrorRendered = lipgloss.NewStyle().
+				SetString("ERR").
+				Bold(true).
+				Foreground(lipgloss.Color("204")).
+				Render()
 
-	styleUnknown = lipgloss.NewStyle().
-			SetString(" ? ").
-			Bold(true).
-			Foreground(lipgloss.Color("134"))
+	styleLevelPanicRendered = lipgloss.NewStyle().
+				SetString("PNC").
+				Bold(true).
+				Foreground(lipgloss.Color("134")).
+				Render()
+
+	styleLevelUnknownRendered = lipgloss.NewStyle().
+					SetString(" ? ").
+					Bold(true).
+					Foreground(lipgloss.Color("134")).
+					Render()
 
 	styleSource = lipgloss.NewStyle().
 			Faint(true)
