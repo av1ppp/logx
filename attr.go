@@ -124,6 +124,9 @@ func App(name string) slog.Attr {
 // Cause returns an Attr that represents the cause of the error.
 // The Attr contains a string key "cause" with the error's message as its value.
 func Cause(err error) slog.Attr {
+	if err == nil {
+		return slog.String("cause", "<nil>")
+	}
 	return slog.String("cause", err.Error())
 }
 

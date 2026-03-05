@@ -1,6 +1,6 @@
 module github.com/av1ppp/logx
 
-go 1.25.3
+go 1.26.0
 
 require (
 	github.com/av1ppp/timex v0.0.0-20241123002339-0bfb0edfb188
